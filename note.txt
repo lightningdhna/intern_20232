@@ -1,0 +1,10 @@
+27/2 : 
+    Tìm hiểu git, tìm hiểu chung opencv
+28/2 : 
+    Tìm hiểu opencv
+        Một số thao tác trên ảnh 
+        Một số phép toán học trên ảnh
+29/2 : Dự kiến:
+    Tìm hiểu opencv : 
+        Đo hiệu năng và kĩ thuật cải thiện
+        Công cụ toán học trên openCv
