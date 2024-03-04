@@ -4,7 +4,12 @@
     Tìm hiểu opencv
         Một số thao tác trên ảnh 
         Một số phép toán học trên ảnh
-29/2 : Dự kiến:
+29/2 : 
     Tìm hiểu opencv : 
         Đo hiệu năng và kĩ thuật cải thiện
         Công cụ toán học trên openCv
+
+4/3 :
+    Tìm hiểu opencv:
+        Công cụ toán học:  matrix, thống kê, tích chập, histogram
+    
