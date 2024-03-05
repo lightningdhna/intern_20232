@@ -12,4 +12,13 @@
 4/3 :
     Tìm hiểu opencv:
         Công cụ toán học:  matrix, thống kê, tích chập, histogram
-    
+    xử lí ảnh với opencv
+        thay đổi không gian màu
+        Biến dổi hình  học :resize, warp afine
+        Image Thresholding
+        làm mượt ảnh
+        iamge gradient
+        canny edge detection
+        contour
+        histogram
+        
