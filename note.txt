@@ -21,4 +21,12 @@
         canny edge detection
         contour
         histogram
-        
+5/3 :
+    xử lí ảnh với open cv
+        Template Matching
+        Hough Line Transform, Circle Transform ...
+        Image Segmentation
+        Image Denoising
+        Image Inpainting
+    feature detection & description
+    video analysis
