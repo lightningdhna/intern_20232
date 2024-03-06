@@ -1,0 +1,4 @@
+data_preprocessing:
+  data_folder: 'data'
+  image_size : [128,128,3]
+  batch_size : 32
