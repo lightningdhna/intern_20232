@@ -1,4 +1,18 @@
 
+import sys
+import os
+
+
+# Get the directory containing the current file
+current_directory = os.path.dirname(os.path.abspath(__file__))
+# Get the parent directory
+parent_directory = os.path.dirname(current_directory)
+print(parent_directory)
+# Add the parent directory to sys.path
+sys.path.insert(0, parent_directory)
+
+import config
+
 
 import math
 import cv2
@@ -7,27 +21,8 @@ import os
 from matplotlib import pyplot as plt
 import numpy as np
 
-
-script_dir = os.path.dirname(os.path.abspath(__file__))
-print(script_dir)
-
-config_file = os.path.join(script_dir,'..', 'config.yaml')
-with open (config_file) as f:
-    config = yaml.safe_load(f)['data_preprocessing']
-data_folder = config['data_folder']
-data_folder_path = os.path.join(script_dir,'..' ,data_folder)
-print(data_folder_path)
-
+data_folder_path = os.path.join(parent_directory,config.data_folder)
 categories = os.listdir(data_folder_path)
-image_size = config['image_size']
-image_size = [int(i) for i in image_size]
-image_width = image_size[0]
-image_height = image_size[1]
-print(image_size)
-print(f"Image size: {image_width} x {image_height}")
-
-batch_size = config['batch_size']
-    
     
 def show_image(images,labels = None):
 
@@ -41,11 +36,10 @@ def show_image(images,labels = None):
         if labels_len < images_len:
             labels.extend([""]*(images_len - labels_len))
         
-        grid_size  = math.isqrt(images_len)
-
+        grid_size  = int(math.ceil(math.sqrt(images_len)))
         
-         # Create subplots
-        fig, axs = plt.subplots(grid_size, grid_size+1)
+        # Create subplots
+        fig, axs = plt.subplots(grid_size, grid_size)
         # Flatten the array of axes
         axs = axs.ravel()
 
@@ -57,20 +51,18 @@ def show_image(images,labels = None):
             axs[i].axis('off')
 
         # Remove unused subplots
-        for i in range(images_len,grid_size*(grid_size+1)):
+        for i in range(images_len,grid_size*(grid_size)):
             fig.delaxes(axs[i])
     else:
         plt.imshow(images)
-        if not isinstance(labels,list):
-            if labels is not None:
-                plt.text(0.5, 0.5, labels, color='red', ha='center', va='center', transform=plt.gca().transAxes)
+        if not isinstance(labels,list) and labels is not None:
+            plt.text(0.5, 0.5, labels, color='red', ha='center', va='center', transform=plt.gca().transAxes)
     plt.show()
     
-def load_data(directory = None ,categories = None):
+def load_data(directory = data_folder_path ,categories = None):
     images = []
     labels = []
-    if directory is None:
-        directory = data_folder_path
+
     if categories is None:
         categories = os.listdir(directory)
         
@@ -80,7 +72,7 @@ def load_data(directory = None ,categories = None):
             img_path = os.path.join(path,img)
             image = cv2.imread(img_path)
             # show_image(image)
-            image = cv2.resize(image,(image_width,image_height))
+            image = cv2.resize(image,(config.image_width,config.image_height))
             image =cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             
             images.append(image)
@@ -90,7 +82,6 @@ def load_data(directory = None ,categories = None):
     return images,labels
 def tensorflow_load_data(directory=None):
     import tensorflow as tf
-    
     if directory is None:
         directory = data_folder_path
     return tf.keras.utils.image_dataset_from_directory(
@@ -99,12 +90,33 @@ def tensorflow_load_data(directory=None):
         label_mode='int',
         class_names=None,
         color_mode='rgb',
-        batch_size=batch_size,
-        image_size=(image_height, image_width),
+        batch_size=config.batch_size,
+        image_size=(config.image_height, config.image_width),
         shuffle=True,
         seed=None,
         validation_split=None,
         subset=None,
         interpolation='bilinear',
         follow_links=False)
-    pass
+
+
+def save_dataset(dataset,\
+            dataset_name = config.default_dataset_name,\
+            dataset_folder = config.data_set_folder ):
+    path = os.path.join(parent_directory,dataset_folder,dataset_name)
+    if not path.exists(path):
+        os.mkdir(path)
+        
+    import tensorflow as tf
+    tf.data.Dataset.save(dataset,path=path)
+    
+def load_saved_dataset(dataset_name = config.default_dataset_name,\
+            dataset_folder = config.data_set_folder ):
+    import tensorflow as tf
+    return tf.data.Dataset.load(os.path.join(parent_directory,dataset_folder,dataset_name))
+
+if __name__=="__main__":
+    print(1)
+    print(categories)
+    data = tensorflow_load_data()
+    save_dataset(data)

@@ -2,3 +2,15 @@ data_preprocessing:
   data_folder: 'data'
   image_size : [128,128,3]
   batch_size : 32
+
+dataset:
+  train_ratio : 0.7
+  val_ratio : 0.15
+  use_test_split : false
+  test_ratio : 0.15
+
+saved:
+  dataset_folder: 'saved/datasets'
+  model_folder: 'saved/models'
+  default_dataset_name: 'default'
+  default_model_name: 'default.keras'

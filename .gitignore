@@ -4,3 +4,7 @@
 
 imageclassification/data/
 
+imageclassification/data1/
+imageclassification/saved/datasets
+imageclassification/__pycache__
+imageclassification/modules/__pycache__
