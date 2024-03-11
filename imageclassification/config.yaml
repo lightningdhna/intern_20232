@@ -6,7 +6,7 @@ data_preprocessing:
 dataset:
   train_ratio : 0.7
   val_ratio : 0.15
-  use_test_split : false
+  use_test_split : true
   test_ratio : 0.15
 
 saved:

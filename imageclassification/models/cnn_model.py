@@ -27,13 +27,11 @@ def build_simple_cnn_model():
     model.add(MaxPooling2D())
     model.add(Conv2D(16, (3,3), 1, activation='relu'))
     model.add(MaxPooling2D())
-    model.add(Conv2D(8, (3,3), 1, activation='relu'))
-    model.add(MaxPooling2D())
     model.add(Flatten())
-    model.add(Dense(512, activation='tanh'))
-    model.add(Dense(512, activation='tanh'))
+    model.add(Dense(128, activation='tanh'))
+    model.add(Dense(64, activation='tanh'))
     model.add(Dense(1, activation='sigmoid'))
-    model.compile('adam', loss=tf.losses.BinaryCrossentropy(), metrics=['accuracy'])
+    
     model.summary()
     return model
 
@@ -78,11 +76,76 @@ def test_image(model,image_path):
     from modules import data_loader
     data_loader.show_image(image,str(y_hat))
     
+def test_model(model,test_ds):
+    from keras.metrics import Precision, Recall, BinaryAccuracy
+    pre = Precision()
+    re = Recall()
+    # acc = BinaryAccuracy()
+    for batch in test_ds.as_numpy_iterator(): 
+        X, y = batch
+        y_hats = model.predict(X)
+        pre.update_state(y, y_hats)
+        re.update_state(y, y_hats)
+        # acc.update_state(y, y_hats)
+    print(f"precision : {pre.result().numpy().squeeze()}")
+    print(f"recall : {re.result().numpy().squeeze()}")
+    
+def show_train_loss(history):
+    import matplotlib.pyplot as plt
+    plt.plot(history.history['loss'], color='red', label='loss')
+    plt.plot(history.history['val_loss'], color='teal', label='val_loss')
+    
+    plt.title('Model Loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    
+    plt.legend(['Train', 'Val'], loc='upper right')
+    plt.show()
+    
+def show_train_accuracy(history):
+    import matplotlib.pyplot as plt
+    
+    plt.plot(history.history['accuracy'], color='teal', label='accuracy')
+    plt.plot(history.history['val_accuracy'], color='orange', label='val_accuracy')
+    
+    plt.title('Model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('Epoch')
+    
+    plt.legend(loc="lower right")
+    
+    plt.show()
+    
 
-if __name__=="__main__":
+    
+def image_classification():
+    from modules import data_loader
+    
     model = build_simple_cnn_model()
-    save_model(model=model)
+    model.compile('adam', loss=tf.losses.BinaryCrossentropy(), metrics=['accuracy'])
+    # data = data_loader.load_saved_dataset()
+    data = data_loader.tensorflow_load_data('data1/train')
+    data = data.map(lambda x,y:(x/255.0,y))
+    batch = data.as_numpy_iterator().next()
+    data_loader.show_image(batch[0],batch[1])
+    train_ds,val_ds,test_ds = data_loader.split_data(data)
+
+    hist = train_model(model,train_ds=train_ds,val_ds=val_ds,epochs=50)
+    show_train_accuracy(hist)
+    save_model(model)
+    test_model(model,test_ds)
+    
+    test_model(model,test_ds=test_ds)
+    
+def ic_test():
     model = load_saved_model()
-    model.summary()
-    # test_image(model,'data/cat/cat_1.jpeg')
-    print(1)
+    test_image(model,'models/cat.png')
+    test_image(model,'models/dog.png')
+    
+if __name__=="__main__":
+    # image_classification()
+    ic_test()
+    pass
+
+    
+    

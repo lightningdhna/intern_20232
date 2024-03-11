@@ -12,12 +12,8 @@ print(parent_directory)
 sys.path.insert(0, parent_directory)
 
 import config
-
-
 import math
 import cv2
-import yaml
-import os
 from matplotlib import pyplot as plt
 import numpy as np
 
@@ -39,7 +35,8 @@ def show_image(images,labels = None):
         grid_size  = int(math.ceil(math.sqrt(images_len)))
         
         # Create subplots
-        fig, axs = plt.subplots(grid_size, grid_size)
+        fig, axs = plt.subplots(grid_size, grid_size, figsize=(10, 10))
+        fig.tight_layout()
         # Flatten the array of axes
         axs = axs.ravel()
 
@@ -104,8 +101,9 @@ def save_dataset(dataset,\
             dataset_name = config.default_dataset_name,\
             dataset_folder = config.data_set_folder ):
     path = os.path.join(parent_directory,dataset_folder,dataset_name)
-    if not path.exists(path):
-        os.mkdir(path)
+    import shutil
+    shutil.rmtree(path)
+    os.mkdir(path)
         
     import tensorflow as tf
     tf.data.Dataset.save(dataset,path=path)
@@ -114,6 +112,18 @@ def load_saved_dataset(dataset_name = config.default_dataset_name,\
             dataset_folder = config.data_set_folder ):
     import tensorflow as tf
     return tf.data.Dataset.load(os.path.join(parent_directory,dataset_folder,dataset_name))
+
+def split_data(data):
+    
+    train_size = int(len(data)*config.train_ratio)
+    val_size = int(len(data)*config.val_ratio)
+    test_size = int(len(data)*config.test_ratio)
+    
+    train_ds = data.take(train_size)
+    val_ds = data.skip(train_size).take(val_size)
+    test_ds = data.skip(train_size+val_size).take(test_size)
+    
+    return train_ds,val_ds,test_ds
 
 if __name__=="__main__":
     print(1)
