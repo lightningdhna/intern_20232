@@ -12,6 +12,7 @@ image_height =image_size[0]
 image_width = image_size[1]
 image_hw = (image_height,image_width)
 image_wh = (image_width,image_height)
+image_pixel = image_height * image_width
 batch_size = data_preprocessing_config['batch_size']
 
 

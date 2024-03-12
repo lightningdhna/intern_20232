@@ -8,3 +8,4 @@ imageclassification/data1/
 imageclassification/saved/datasets
 imageclassification/__pycache__
 imageclassification/modules/__pycache__
+imageclassification/models/__pycache__

@@ -77,10 +77,10 @@ def load_data(directory = data_folder_path ,categories = None):
              
             print(img_path)
     return images,labels
-def tensorflow_load_data(directory=None):
+def tensorflow_load_data(directory=data_folder_path):
     import tensorflow as tf
     if directory is None:
-        directory = data_folder_path
+        return None
     return tf.keras.utils.image_dataset_from_directory(
         directory,
         labels='inferred',
@@ -125,8 +125,19 @@ def split_data(data):
     
     return train_ds,val_ds,test_ds
 
+def dataset_to_array(dataset):
+    images = []
+    labels = []
+    for batch in dataset:
+        images.append(batch[0].numpy())
+        labels.append(batch[1].numpy())
+    images = np.concatenate(images,axis = 0)
+    labels = np.concatenate(labels,axis = 0)
+    return images,labels
+
 if __name__=="__main__":
     print(1)
     print(categories)
     data = tensorflow_load_data()
     save_dataset(data)
+    

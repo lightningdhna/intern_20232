@@ -60,7 +60,7 @@ def test_image(model,image_path):
     image = cv2.imread(image_path)
     image = cv2.resize(image,config.image_wh)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    image = image/255
+    image = image/255.0
     
     import numpy as np
     y_hat = model.predict(np.expand_dims(image,axis = 0))
